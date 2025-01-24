@@ -9,7 +9,20 @@ export default function AuthRoutesLayout() {
   if (isSignedIn) return <Redirect href={"/(home)"} />;
 
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        ...(process.env.EXPO_OS !== "ios"
+          ? {}
+          : {
+              headerLargeTitle: true,
+              headerTransparent: true,
+              headerBlurEffect: "systemChromeMaterial",
+              headerLargeTitleShadowVisible: true,
+              headerShadowVisible: true,
+              headerLargeStyle: { backgroundColor: "transparent" },
+            }),
+      }}
+    >
       <Stack.Screen name="index" options={{ headerTitle: "Sign in" }} />
       <Stack.Screen name="sign-up" options={{ headerTitle: "Sign up" }} />
       <Stack.Screen

@@ -23,7 +23,8 @@ export default function AuthRoutesLayout() {
             }),
       }}
     >
-      <Stack.Screen name="index" options={{ headerTitle: "Sign in" }} />
+      <Stack.Screen name="index" options={{ headerShown:  false}} />
+      <Stack.Screen name="sign-in" options={{ headerTitle: "Sign in" }} />
       <Stack.Screen name="sign-up" options={{ headerTitle: "Sign up" }} />
       <Stack.Screen
         name="reset-password"

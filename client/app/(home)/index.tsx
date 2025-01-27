@@ -1,11 +1,16 @@
+import { BodyScrollView } from "@/components/BodyScrollView";
+import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Text, View } from "react-native";
-
+import { useClerk } from "@clerk/clerk-expo";
 export default function HomeScreen() {
+  const { signOut } = useClerk();
   return (
-    <ThemedView>
-      <ThemedText type="title">Wassup</ThemedText>
-    </ThemedView>
+    <BodyScrollView style={{ padding: 16 }}>
+      <ThemedText type="title">HomeScreen</ThemedText>
+      <ThemedButton variant="destructive" onPress={() => signOut()}>
+        Log out
+      </ThemedButton>
+    </BodyScrollView>
   );
 }

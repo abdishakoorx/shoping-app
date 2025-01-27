@@ -1,75 +1,95 @@
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, type TouchableOpacityProps } from 'react-native';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Colors } from '@/constants/Colors';
+import React from "react";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  type TouchableOpacityProps,
+} from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
 
 export type ThemedButtonProps = TouchableOpacityProps & {
-  lightColor?: string;
-  darkColor?: string;
-  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
-  size?: 'default' | 'small' | 'large' | 'icon';
+  variant?:
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
+    | "ghost"
+    | "link";
+  size?: "default" | "small" | "large" | "icon";
   children: React.ReactNode;
+  loading?: boolean;
+  disabled?: boolean;
 };
 
 export function ThemedButton({
   style,
-  lightColor,
-  darkColor,
-  variant = 'default',
-  size = 'default',
+  variant = "default",
+  size = "large", // Default size set to large
   children,
+  loading = false,
+  disabled = false,
   ...rest
 }: ThemedButtonProps) {
-  // Background color remains consistent for the default variant
-  const backgroundColor =
-    variant === 'default'
-      ? Colors.light.tint // Always use the light mode tint color for brand identity
-      : useThemeColor(
-          { light: lightColor, dark: darkColor },
-          variant === 'secondary' ? 'secondary' : variant === 'destructive' ? 'destructive' : 'background'
-        );
+  const backgroundColor = useThemeColor(
+    {},
+    variant === "default"
+      ? "backgroundInverse" // White in dark mode, black in light mode
+      : variant === "secondary"
+      ? "secondary"
+      : variant === "destructive"
+      ? "destructiveBg"
+      : "background"
+  );
 
-  // Text color adapts to the theme
   const textColor = useThemeColor(
-    { light: Colors.light.text, dark: Colors.dark.text },
-    variant === 'default' || variant === 'secondary' || variant === 'destructive' ? 'text' : 'tint'
+    {},
+    variant === "default"
+      ? "background" // Dark text in light mode, white text in dark mode
+      : variant === "destructive"
+      ? "destructiveText"
+      : "text"
   );
 
-  const borderColor = useThemeColor(
-    { light: Colors.light.tint, dark: Colors.dark.tint },
-    'tint'
-  );
+  const borderColor = useThemeColor({}, "border");
+  const disabledBackgroundColor = useThemeColor({}, "disabledBg");
+  const disabledTextColor = useThemeColor({}, "disabledText");
 
   const buttonStyles = [
     styles.button,
-    variant === 'default' && styles.default,
-    variant === 'secondary' && styles.secondary,
-    variant === 'destructive' && styles.destructive,
-    variant === 'outline' && styles.outline,
-    variant === 'ghost' && styles.ghost,
-    variant === 'link' && styles.link,
-    size === 'small' && styles.small,
-    size === 'large' && styles.large,
-    size === 'icon' && styles.icon,
-    { backgroundColor },
-    variant === 'outline' && { borderColor },
+    variant === "outline" && { borderColor, borderWidth: 1 },
+    (variant === "ghost" || variant === "link") && {
+      backgroundColor: "transparent",
+    },
+    size === "small" && styles.small,
+    size === "large" && styles.large,
+    size === "icon" && styles.icon,
+    { backgroundColor: disabled ? disabledBackgroundColor : backgroundColor },
     style,
   ];
 
   const textStyles = [
     styles.text,
-    variant === 'default' && styles.defaultText,
-    variant === 'secondary' && styles.secondaryText,
-    variant === 'destructive' && styles.destructiveText,
-    variant === 'outline' && styles.outlineText,
-    variant === 'ghost' && styles.ghostText,
-    variant === 'link' && styles.linkText,
-    { color: textColor },
+    size === "small" && styles.smallText,
+    size === "large" && styles.largeText,
+    variant === "link" && styles.linkText,
+    { color: disabled ? disabledTextColor : textColor },
   ];
 
   return (
-    <TouchableOpacity style={buttonStyles} {...rest}>
-      {typeof children === 'string' ? <Text style={textStyles}>{children}</Text> : children}
+    <TouchableOpacity
+      style={buttonStyles}
+      disabled={disabled || loading}
+      {...rest}
+    >
+      {loading ? (
+        <ActivityIndicator color={textColor} />
+      ) : typeof children === "string" ? (
+        <Text style={textStyles}>{children}</Text>
+      ) : (
+        children
+      )}
     </TouchableOpacity>
   );
 }
@@ -77,33 +97,11 @@ export function ThemedButton({
 const styles = StyleSheet.create({
   button: {
     borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    marginHorizontal: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  default: {
-    backgroundColor: Colors.light.tint, // Always the same for brand identity
-  },
-  secondary: {
-    backgroundColor: Colors.light.secondary,
-  },
-  destructive: {
-    backgroundColor: Colors.light.destructive,
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-  },
-  ghost: {
-    backgroundColor: 'transparent',
-  },
-  link: {
-    backgroundColor: 'transparent',
-    paddingHorizontal: 0,
-    paddingVertical: 0,
+    paddingVertical: 16, // Default large padding
+    paddingHorizontal: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
   small: {
     paddingVertical: 8,
@@ -121,25 +119,15 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
-  defaultText: {
-    color: Colors.light.text, // Text color adapts to the theme
+  smallText: {
+    fontSize: 14,
   },
-  secondaryText: {
-    color: Colors.light.text,
-  },
-  destructiveText: {
-    color: '#fff',
-  },
-  outlineText: {
-    color: Colors.light.tint,
-  },
-  ghostText: {
-    color: Colors.light.tint,
+  largeText: {
+    fontSize: 18,
   },
   linkText: {
-    color: Colors.light.tint,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });

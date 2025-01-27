@@ -3,8 +3,9 @@ import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { useSignIn } from "@clerk/clerk-expo";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useState } from "react";
+import { View } from "react-native";
 
 export default function SingInScreen() {
   const { isLoaded, setActive, signIn } = useSignIn();
@@ -14,25 +15,67 @@ export default function SingInScreen() {
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
 
+  const onSigninPress = () => {};
+
   return (
-    <BodyScrollView>
-      <ThemedTextInput
+    <BodyScrollView contentContainerStyle={{ paddingHorizontal: 16, gap: 16 }}>
+      <View>
+        <ThemedTextInput
+          variant="default"
+          size="default"
+          label="Email"
+          placeholder="Enter your email"
+          value={emailAddress}
+          onChangeText={setEmailAddress}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <ThemedTextInput
+          variant="default"
+          size="default"
+          label="Password"
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={setPassword}
+        />
+      </View>
+      <ThemedButton
         variant="default"
-        size="small"
-        label="Username"
-        placeholder="Enter your username"
-      />
-      <ThemedButton variant="default" size="default">
+        onPress={onSigninPress}
+        loading={isSigningIn}
+        disabled={!emailAddress || !password || isSigningIn}
+      >
         Welcome
       </ThemedButton>
 
-      <ThemedText>
-        <Link href={"/(auth)/sign-up"}>Sign up</Link>
-      </ThemedText>
-
-      <ThemedText type="link">
-        <Link href={"/(auth)/reset-password"}>Forgot password</Link>
-      </ThemedText>
+      <View
+        style={{
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 20,
+          marginTop: 16,
+          justifyContent: "center",
+        }}
+      >
+        <View style={{ alignItems: "center" }}>
+          <ThemedText>Don't have an account?</ThemedText>
+          <ThemedText
+            type="link"
+            onPress={() => router.push("/(auth)/sign-up")}
+          >
+            Sign up
+          </ThemedText>
+        </View>
+        <View style={{ alignItems: "center" }}>
+          <ThemedText>Forgot Password?</ThemedText>
+          <ThemedText
+            type="link"
+            onPress={() => router.push("/(auth)/reset-password")}
+          >
+            Reset Password
+          </ThemedText>
+        </View>
+      </View>
     </BodyScrollView>
   );
 }

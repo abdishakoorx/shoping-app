@@ -31,8 +31,8 @@ export function ThemedTextInput({
     'text'
   );
   const borderColor = useThemeColor(
-    { light: Colors.light.icon, dark: Colors.dark.icon },
-    'icon'
+    { light: Colors.light.border, dark: Colors.dark.border },
+    'border'
   );
   const errorColor = useThemeColor(
     { light: '#ff0000', dark: '#ff0000' },
@@ -55,7 +55,7 @@ export function ThemedTextInput({
       {label && <Text style={[styles.label, { color: textColor }]}>{label}</Text>}
       <TextInput
         style={inputStyles}
-        placeholderTextColor={Colors.light.icon}
+        placeholderTextColor={Colors.light.text}
         {...rest}
       />
       {error && <Text style={[styles.error, { color: errorColor }]}>{error}</Text>}
@@ -66,8 +66,7 @@ export function ThemedTextInput({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginBottom: 16,    
-    marginHorizontal: 10,
+    marginBottom: 16,
   },
   input: {
     borderRadius: 8,

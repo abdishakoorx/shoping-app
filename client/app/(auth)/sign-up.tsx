@@ -108,6 +108,7 @@ export default function SignupScreen() {
           size="default"
           label="Password"
           placeholder="Enter your password"
+          secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
@@ -118,7 +119,7 @@ export default function SignupScreen() {
         loading={isLoading}
         disabled={!emailAddress || !password || isLoading}
       >
-        Welcome
+        Continue
       </ThemedButton>
 
       <View

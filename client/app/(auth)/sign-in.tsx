@@ -2,9 +2,10 @@ import { BodyScrollView } from "@/components/BodyScrollView";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
-import { useSignIn } from "@clerk/clerk-expo";
+import { isClerkAPIResponseError, useSignIn } from "@clerk/clerk-expo";
+import { ClerkAPIError } from "@clerk/types";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { View } from "react-native";
 
 export default function SingInScreen() {
@@ -14,8 +15,33 @@ export default function SingInScreen() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [errors, setErrors] = useState<ClerkAPIError[]>([]);
 
-  const onSigninPress = () => {};
+  const onSigninPress = useCallback(async () => {
+    if (!isLoaded) return;
+    setIsSigningIn(true);
+
+    try {
+      const signinAttempt = signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+
+      if ((await signinAttempt).status === "complete") {
+        await setActive({ session: (await signinAttempt).createdSessionId });
+        router.replace("/(home)");
+      } else {
+        console.error(JSON.stringify(signinAttempt, null, 2));
+      }
+    } catch (e) {
+      if (isClerkAPIResponseError(e)) {
+        setErrors(e.errors);
+      }
+      console.error(JSON.stringify(e, null, 2));
+    } finally {
+      setIsSigningIn(false);
+    }
+  }, [isLoaded, emailAddress, password]);
 
   return (
     <BodyScrollView contentContainerStyle={{ paddingHorizontal: 16, gap: 16 }}>
@@ -35,6 +61,7 @@ export default function SingInScreen() {
           size="default"
           label="Password"
           placeholder="Enter your password"
+          secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
@@ -45,8 +72,13 @@ export default function SingInScreen() {
         loading={isSigningIn}
         disabled={!emailAddress || !password || isSigningIn}
       >
-        Welcome
+        Sign in
       </ThemedButton>
+      {errors.map((error) => (
+        <ThemedText key={error.longMessage} style={{ color: "red" }}>
+          {error.longMessage}
+        </ThemedText>
+      ))}
 
       <View
         style={{

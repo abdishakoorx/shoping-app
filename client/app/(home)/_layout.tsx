@@ -1,6 +1,8 @@
 import { ThemedButton } from "@/components/ThemedButton";
+import { ThemedText } from "@/components/ThemedText";
 import { useUser } from "@clerk/clerk-expo";
 import { Redirect, Stack, useRouter } from "expo-router";
+import { Pressable } from "react-native";
 
 export default function HomeRoutesLayout() {
   const router = useRouter();
@@ -50,9 +52,11 @@ export default function HomeRoutesLayout() {
           headerLargeTitle: false,
           headerTitle: "Scan QR Code",
           headerLeft: () => (
-            <ThemedButton variant="ghost" onPress={() => router.back()}>
-              Cancel
-            </ThemedButton>
+            <Pressable onPress={() => router.back()}>
+              <ThemedText style={{ color: "#007AFF" }} type="link">
+                Cancel
+              </ThemedText>
+            </Pressable>
           ),
         }}
       />

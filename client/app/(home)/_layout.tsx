@@ -1,6 +1,15 @@
-import { Stack } from "expo-router";
+import { ThemedButton } from "@/components/ThemedButton";
+import { useUser } from "@clerk/clerk-expo";
+import { Redirect, Stack, useRouter } from "expo-router";
 
 export default function HomeRoutesLayout() {
+  const router = useRouter();
+
+  const user = useUser();
+
+  if (!user) {
+    return <Redirect href={"/(auth)"} />;
+  }
   return (
     <Stack
       screenOptions={{
@@ -16,7 +25,37 @@ export default function HomeRoutesLayout() {
             }),
       }}
     >
-      <Stack.Screen name="index" />
+      <Stack.Screen name="index" options={{ headerTitle: "Shopping Lists" }} />
+      <Stack.Screen
+        name="list/new/index"
+        options={{
+          presentation: "formSheet",
+          sheetGrabberVisible: true,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="profile"
+        options={{
+          presentation: "formSheet",
+          sheetAllowedDetents: [0.75, 1],
+          sheetGrabberVisible: true,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="list/new/scan"
+        options={{
+          presentation: "fullScreenModal",
+          headerLargeTitle: false,
+          headerTitle: "Scan QR Code",
+          headerLeft: () => (
+            <ThemedButton variant="ghost" onPress={() => router.back()}>
+              Cancel
+            </ThemedButton>
+          ),
+        }}
+      />
     </Stack>
   );
 }

@@ -1,13 +1,19 @@
-import React from 'react';
-import { TextInput, type TextInputProps, StyleSheet, View, Text } from 'react-native';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Colors } from '@/constants/Colors';
+import React from "react";
+import {
+  TextInput,
+  type TextInputProps,
+  StyleSheet,
+  View,
+  Text,
+} from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
 
 export type ThemedTextInputProps = TextInputProps & {
   lightColor?: string;
   darkColor?: string;
-  variant?: 'default' | 'outline' | 'underline';
-  size?: 'default' | 'small' | 'large';
+  variant?: "default" | "outline" | "underline" | "ghost";
+  size?: "default" | "small" | "large";
   label?: string;
   error?: string;
 };
@@ -16,56 +22,61 @@ export function ThemedTextInput({
   style,
   lightColor,
   darkColor,
-  variant = 'default',
-  size = 'default',
+  variant = "default",
+  size = "default",
   label,
   error,
   ...rest
 }: ThemedTextInputProps) {
   const backgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor },
-    'background'
+    "background"
   );
   const textColor = useThemeColor(
     { light: Colors.light.text, dark: Colors.dark.text },
-    'text'
+    "text"
   );
   const borderColor = useThemeColor(
     { light: Colors.light.border, dark: Colors.dark.border },
-    'border'
+    "border"
   );
   const errorColor = useThemeColor(
-    { light: '#ff0000', dark: '#ff0000' },
-    'text'
+    { light: "#ff0000", dark: "#ff0000" },
+    "text"
   );
 
   const inputStyles = [
     styles.input,
-    variant === 'default' && styles.default,
-    variant === 'outline' && styles.outline,
-    variant === 'underline' && styles.underline,
-    size === 'small' && styles.small,
-    size === 'large' && styles.large,
+    variant === "default" && styles.default,
+    variant === "outline" && styles.outline,
+    variant === "underline" && styles.underline,
+    variant === "ghost" && styles.ghost,
+    size === "small" && styles.small,
+    size === "large" && styles.large,
     { backgroundColor, color: textColor, borderColor },
     style,
   ];
 
   return (
     <View style={styles.container}>
-      {label && <Text style={[styles.label, { color: textColor }]}>{label}</Text>}
+      {label && (
+        <Text style={[styles.label, { color: textColor }]}>{label}</Text>
+      )}
       <TextInput
         style={inputStyles}
-        placeholderTextColor={Colors.light.text}
+        placeholderTextColor={`${textColor}80`}
         {...rest}
       />
-      {error && <Text style={[styles.error, { color: errorColor }]}>{error}</Text>}
+      {error && (
+        <Text style={[styles.error, { color: errorColor }]}>{error}</Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     marginBottom: 16,
   },
   input: {
@@ -79,14 +90,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   outline: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 1,
   },
   underline: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 0,
     borderBottomWidth: 1,
     borderRadius: 0,
+  },
+  ghost: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
   },
   small: {
     paddingVertical: 8,
@@ -101,11 +116,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 8,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   error: {
     fontSize: 12,
     marginTop: 4,
-    color: '#ff0000',
+    color: "#ff0000",
   },
 });

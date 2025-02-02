@@ -58,7 +58,7 @@ export function ThemedButton({
 
   const buttonStyles = [
     styles.button,
-    variant === "outline" && { borderColor, borderWidth: 1 },
+    variant === "outline" && { borderColor: `${textColor}`, borderWidth: 2 },
     (variant === "ghost" || variant === "link") && {
       backgroundColor: "transparent",
     },

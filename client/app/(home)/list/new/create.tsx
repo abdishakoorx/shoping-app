@@ -2,14 +2,31 @@ import { BodyScrollView } from "@/components/BodyScrollView";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
+import { backgroundColors, emojis } from "@/constants/Colors";
+import { useListCreation } from "@/context/ListCreationContext";
 import { Link, Stack } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 export default function CreateNewListScreen() {
   const [listName, setListName] = useState("");
   const [listDescription, setListDescription] = useState("");
+  const { selectedColor, selectedEmoji, setSelectedColor, setSelectedEmoji } =
+    useListCreation();
+
   const handleCreateList = () => {};
+
+  useEffect(() => {
+    setSelectedEmoji(emojis[Math.floor(Math.random() * emojis.length)]);
+    setSelectedColor(
+      backgroundColors[Math.floor(Math.random() * backgroundColors.length)]
+    );
+
+    return () => {
+      setSelectedColor("")
+      setSelectedEmoji("")
+    }
+  }, []);
 
   return (
     <>
@@ -48,26 +65,26 @@ export default function CreateNewListScreen() {
           />
 
           <Link
-            href={{ pathname: "/" }}
+            href={{ pathname: "/(home)/emojiPicker" }}
             style={{
-              borderColor: "blue",
+              borderColor: selectedColor,
               padding: 4,
-              borderWidth: 8,
+              borderWidth: 4,
               borderRadius: 32,
               marginBottom: 12,
             }}
           >
             <View style={{ padding: 2 }}>
-              <Text>{"🤔"}</Text>
+              <Text>{selectedEmoji}</Text>
             </View>
           </Link>
           <Link
-            href={{ pathname: "/" }}
+            href={{ pathname: "/(home)/colorPicker" }}
             style={{
-              borderColor: "blue",
+              borderColor: selectedColor,
               padding: 4,
-              borderWidth: 8,
-              borderRadius: 32,
+              borderWidth: 4,
+              borderRadius: 100,
               marginBottom: 12,
             }}
           >
@@ -77,7 +94,7 @@ export default function CreateNewListScreen() {
                   width: 24,
                   height: 24,
                   borderRadius: 100,
-                  backgroundColor: "blue",
+                  backgroundColor: selectedColor,
                 }}
               />
             </View>
